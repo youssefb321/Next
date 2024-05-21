@@ -1,0 +1,166 @@
+{% extends "layout.html" %} {% block title %} Game {% endblock %} {% block main
+%}
+<div class="body-container">
+  <div class="game-container">
+    <div>
+      <div class="game-title">
+        <h1>{{ game_data[0]["game_name"] }}</h1>
+      </div>
+      <div class="players">
+        <!-- Display Game winner if no player is up next -->
+        {% if game_data|length == 1 %}
+        <h1>Winner is {{ game_data[0]["player_name"] }}</h1>
+        {% else %}
+        <!-- Display current players -->
+        <h1>{{game_data[0]["player_name"]}}</h1>
+        <h2>VS</h2>
+        <h1>{{game_data[1]["player_name"]}}</h1>
+      </div>
+      {% endif %}
+    </div>
+    <!-- Game code -->
+    <div class="game-code">
+      <h3>Game Code: {{game_data[0]["game_id"]}}</h3>
+    </div>
+
+    <!-- Remove button and modal if there is no player next -->
+    {% if game_data|length == 1 %} {% else %}
+    <div class="actions">
+      <!-- Button trigger modal -->
+      <button
+        type="button"
+        class="btn btn-primary"
+        data-bs-toggle="modal"
+        data-bs-target="#exampleModal"
+      >
+        Start next game
+      </button>
+
+      <!-- Modal -->
+      <div
+        class="modal fade"
+        id="exampleModal"
+        tabindex="-1"
+        aria-labelledby="exampleModalLabel"
+        aria-hidden="true"
+      >
+        <div class="modal-dialog modal-sm">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h1 class="modal-title fs-5" id="exampleModalLabel">
+                Select winner
+              </h1>
+              <button
+                type="button"
+                class="btn-close"
+                data-bs-dismiss="modal"
+                aria-label="Close"
+              ></button>
+            </div>
+            <!-- Send other player's id upon selecting winner to delete the losing player  -->
+            <div class="modal-body">
+              <form id="form1" action="/game" method="post">
+                <input type="hidden" name="form1" value="1" />
+                <input
+                  type="hidden"
+                  name="game_id"
+                  value="{{ game_data[0]['game_id'] }}"
+                />
+
+                <div class="form-check">
+                  <input
+                    class="form-check-input"
+                    type="radio"
+                    name="winner"
+                    id="winner1"
+                    value="{{ game_data[1]['player_id'] }}"
+                  />
+                  <label class="form-check-label" for="flexRadioDefault1">
+                    {{ game_data[0]["player_name"] }}
+                  </label>
+                </div>
+                <div class="form-check">
+                  <input
+                    class="form-check-input"
+                    type="radio"
+                    name="winner"
+                    id="winner2"
+                    value="{{ game_data[0]['player_id']}}"
+                  />
+                  <label class="form-check-label" for="winner2">
+                    {{ game_data[1]["player_name"] }}
+                  </label>
+                </div>
+              </form>
+            </div>
+            <div class="modal-footer">
+              <button
+                type="button"
+                class="btn btn-secondary"
+                data-bs-dismiss="modal"
+              >
+                Close
+              </button>
+              <button
+                type="submit"
+                onclick="submitForm()"
+                class="btn btn-primary"
+              >
+                Start next game
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+      {% endif %}
+
+      <!-- End entire game session -->
+      <form action="/game" method="post" class="end-game">
+        <input type="hidden" name="form0" value="1" />
+        <input
+          type="hidden"
+          name="game_id"
+          value="{{ game_data[0]['game_id'] }}"
+        />
+        <button class="btn btn-primary end-game" type="submit">
+          End game session
+        </button>
+      </form>
+
+      <!-- Add new players to play next -->
+      <form action="/game" method="post">
+        <input type="hidden" name="form2" value="1" />
+        <div class="mb-3">
+          <input
+            type="text"
+            name="next"
+            autocomplete="off"
+            autofocus
+            placeholder="Add next"
+          />
+          <input
+            type="hidden"
+            name="game_id"
+            value="{{ game_data[0]['game_id'] }}"
+          />
+          <button class="btn btn-primary">Add</button>
+        </div>
+      </form>
+    </div>
+    <!-- Players up next -->
+    <div class="up-next">
+      <h3>Up next:</h3>
+      <ol>
+        {% for player in game_data[2:] %}
+        <li>{{ player["player_name"] }}</li>
+        {% endfor %}
+      </ol>
+    </div>
+  </div>
+</div>
+<script>
+  const submitForm = () => {
+    document.getElementById("form1").submit();
+  };
+</script>
+{% endblock %}

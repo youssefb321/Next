@@ -1,0 +1,35 @@
+{% extends "layout.html" %} {% block title %} Create Game {% endblock %} {%
+block main %}
+<form method="post" action="/new">
+  <h1 class="title">Create a New Game</h1>
+  <div class="mb-3">
+    <input
+      type="text"
+      name="name"
+      required
+      autocomplete="off"
+      autofocus
+      placeholder="Name of the game"
+    />
+  </div>
+  <div class="mb-3">
+    <input
+      type="text"
+      name="team-1"
+      required
+      autocomplete="off"
+      placeholder="Team 1"
+    />
+  </div>
+  <div class="mb-3">
+    <input
+      type="text"
+      name="team-2"
+      required
+      autocomplete="off"
+      placeholder="Team 2"
+    />
+  </div>
+  <button class="btn btn-primary">Create Game</button>
+</form>
+{% endblock %}
